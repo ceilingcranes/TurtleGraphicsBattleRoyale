@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2e51813e-e302-407a-94a2-4484f5c49c27" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Command.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LocationChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MovementLocationChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/RotateLocationChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/View.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ViewApplication.java" afterDir="false" />
-    </list>
+    <list default="true" id="2e51813e-e302-407a-94a2-4484f5c49c27" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -80,8 +73,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ViewApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="74" column="44" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
+            <state relative-caret-position="352">
+              <caret line="82" column="28" lean-forward="true" selection-start-line="82" selection-start-column="28" selection-end-line="82" selection-end-column="28" />
               <folding>
                 <element signature="e#421#422#0" expanded="true" />
                 <element signature="e#460#461#0" expanded="true" />
@@ -206,7 +199,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540666778525" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540669925102" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/KeyboardExample" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
@@ -236,12 +229,12 @@
       <option name="presentableId" value="Default" />
       <updated>1539919384656</updated>
       <workItem from="1539919392336" duration="3409000" />
-      <workItem from="1540522840800" duration="7075000" />
+      <workItem from="1540522840800" duration="7676000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10484000" />
+    <option name="totallyTimeSpent" value="11085000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
@@ -342,8 +335,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ViewApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="74" column="44" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
+        <state relative-caret-position="352">
+          <caret line="82" column="28" lean-forward="true" selection-start-line="82" selection-start-column="28" selection-end-line="82" selection-end-column="28" />
           <folding>
             <element signature="e#421#422#0" expanded="true" />
             <element signature="e#460#461#0" expanded="true" />
