@@ -1,3 +1,5 @@
+package main;
+
 public class RotateLocationChange extends LocationChange {
     private int rotate;
     public RotateLocationChange(int r){

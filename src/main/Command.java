@@ -1,12 +1,13 @@
+package main;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 /**
- * The Command class is used to track the commands used to control a given turtle. The initalization requires
+ * The main.Command class is used to track the commands used to control a given turtle. The initalization requires
  * either an ArrayList of inputs, a file name containing valid commands, with one command on each line, or a string
  * with valid commands seperated with newlines. This keeps track of the current command, and allows a system for getting
  * the next LocationChange object for movement.
@@ -15,7 +16,7 @@ public class Command { // TODO: Implements Iterable
     private LinkedList<LocationChange> commandList = new LinkedList<>();
     int index = 0; // Make this not terrible
     // TODO: Add file option, add option for string input with \n or , separations
-//    public Command(String filename){
+//    public main.Command(String filename){
 //
 //    }
     private String commandString;
@@ -40,6 +41,7 @@ public class Command { // TODO: Implements Iterable
     public String toString(){
         return commandString;
     }
+    // TODO: Make this system more robust
     private LocationChange generateLocationChange(String input){
         Pattern movePattern = Pattern.compile("move (\\d*)");
         Matcher moveMatch = movePattern.matcher(input);
@@ -54,7 +56,7 @@ public class Command { // TODO: Implements Iterable
         if (turnMatch.matches()){
             return new RotateLocationChange(Integer.parseInt(turnMatch.group(1)));
         }
-        throw new RuntimeException("Command Not valid: "+input);
+        throw new RuntimeException("main.Command Not valid: "+ input);
     }
 
     public LocationChange getNextLocation(){

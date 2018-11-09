@@ -1,3 +1,5 @@
+package main;
+
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -5,20 +7,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-
-import javax.swing.*;
+import main.Command;
 
 public class ViewApplication extends Application {
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
@@ -50,6 +48,11 @@ public class ViewApplication extends Application {
         }
     }
 
+    /**
+     * Creates the starting scene graph for the start screen.
+     * @param primaryStage : the Stage object for the view
+     * @return the Pane object containing the start screen
+     */
     private Pane startScreenSceneGraph(Stage primaryStage){
         int max_players  = 4;
 
@@ -82,6 +85,7 @@ public class ViewApplication extends Application {
 
         Text number = new Text();
         Button submitButton = new Button("Submit");
+        // When submit button is pressed, change the scene to the player creation scene graph
         submitButton.setOnAction((event)-> {
             number.setText(numPlayers.toString());
             playerCreationScene(primaryStage);
@@ -100,6 +104,11 @@ public class ViewApplication extends Application {
         updateStage(primaryStage, start, "Start");
     }
 
+    /**
+     * Return a Pane object containing the scene graph for the player creation scene
+     * @param primaryStage: Stage containing the scene
+     * @return Pane object with scene graph
+     */
     private Pane playerCreationSceneGraph(Stage primaryStage){
         Button backButton = new Button("Back");
         backButton.setOnAction((event)->{
@@ -132,8 +141,8 @@ public class ViewApplication extends Application {
             String playerNames = "";
             for (PlayerTextFields playerData:playerFields
                  ) {
-                Player p = new Player(playerData.getName().getText(), "red", playerData.getCommands().getText());
-                playerNames += p.toString();
+                board.addPlayer(playerData.getName().getText(), new Command(playerData.getCommands().getText()));
+                playerNames += playerData.getName().getText();
             }
             text.setText(playerNames);
             // TODO: Add game screen transition
@@ -149,6 +158,10 @@ public class ViewApplication extends Application {
         return root;
     }
 
+    /**
+     * Update stage to the player creation screen.
+     * @param primaryStage: Stage to update
+     */
     private void playerCreationScene(Stage primaryStage){
         Pane sceneGraph = playerCreationSceneGraph(primaryStage);
         updateStage(primaryStage, sceneGraph, "Player Update");
@@ -162,6 +175,9 @@ public class ViewApplication extends Application {
     }
 
     @Override
+    /**
+     * Required method to start the application
+     */
     public void start(Stage primaryStage) {
         startScreenScene(primaryStage);
     }

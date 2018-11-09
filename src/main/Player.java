@@ -1,10 +1,14 @@
+package main;
+
+import main.Command;
+
 public class Player {
     String playerName;
     String playerColor; // should this be a string?
     Command commands;
-    public Player(String name, String color, String commandString){
+    public Player(String name, String color, Command commands){
         this.playerName = name;
-        this.commands = new Command(commandString);
+        this.commands =commands;
         this.playerColor = color;
     }
 

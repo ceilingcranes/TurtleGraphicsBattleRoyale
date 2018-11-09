@@ -1,3 +1,5 @@
+package main;
+
 public class GameController {
     static View v;
     static ViewApplication ux;

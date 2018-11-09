@@ -1,3 +1,5 @@
+package main;
+
 public class MovementLocationChange extends LocationChange {
     private int steps;
     public MovementLocationChange(int s){
