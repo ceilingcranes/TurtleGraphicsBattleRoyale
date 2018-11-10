@@ -1,7 +1,6 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,18 +14,32 @@ import java.util.regex.Pattern;
 public class Command { // TODO: Implements Iterable
     private LinkedList<LocationChange> commandList = new LinkedList<>();
     int index = 0; // Make this not terrible
+    private String commandString;
+
+
     // TODO: Add file option, add option for string input with \n or , separations
 //    public main.Command(String filename){
 //
 //    }
-    private String commandString;
 
-    public Command(String commandString){
-        ArrayList<String> commandInputs = new ArrayList<>();
+    public Command(){this.commandString = "";}
+
+    public Command(String commandInput){
+        this.commandString = "";
+        addCommands(commandInput);
+    }
+
+    public Boolean isEmpty(){
+        return commandList.isEmpty();
+    }
+
+    public String toString(){
+        return commandString;
+    }
+
+    public void addCommands(String commandString){
         String lines[] = commandString.split("\\n");
-        for (String line: lines){
-            commandInputs.add(line); // I hate this
-        }
+        ArrayList<String> commandInputs = new ArrayList<>(Arrays.asList(lines));
 
         for(int i=0; i<commandInputs.size(); i++){
 
@@ -35,33 +48,33 @@ public class Command { // TODO: Implements Iterable
             System.out.println("Location Class: "+ next_location.getClass());
             this.commandList.add(next_location);
         }
-        this.commandString = commandString;
+
+        this.commandString += commandString;
+
     }
 
-    public String toString(){
-        return commandString;
-    }
     // TODO: Make this system more robust
-    private LocationChange generateLocationChange(String input){
+    public LocationChange generateLocationChange(String input){
+        String toMatch = input.trim();
         Pattern movePattern = Pattern.compile("move (\\d*)");
-        Matcher moveMatch = movePattern.matcher(input);
+        Matcher moveMatch = movePattern.matcher(toMatch);
 
         if (moveMatch.matches()){
-            return new MovementLocationChange(Integer.parseInt(moveMatch.group(1)));
+            return new LocationChange(Integer.parseInt(moveMatch.group(1)),0);
         }
 
-        Pattern turnPattern = Pattern.compile("turn (-+\\d*)");
-        Matcher turnMatch = turnPattern.matcher(input);
+        Pattern turnPattern = Pattern.compile("turn (-?\\d*)");
+        Matcher turnMatch = turnPattern.matcher(toMatch);
 
         if (turnMatch.matches()){
-            return new RotateLocationChange(Integer.parseInt(turnMatch.group(1)));
+            return new LocationChange(0,Integer.parseInt(turnMatch.group(1)));
         }
-        throw new RuntimeException("main.Command Not valid: "+ input);
+        throw new RuntimeException("main.Command Not valid: "+ toMatch);
     }
 
     public LocationChange getNextLocation(){
         if (commandList.isEmpty()){
-            return new MovementLocationChange(0);
+            return new LocationChange(0,0);
         }
         else{
             LocationChange nextLoc = commandList.get(index);
@@ -71,9 +84,13 @@ public class Command { // TODO: Implements Iterable
 
     }
 
+    public void resetCommands(){
+        commandList.clear();
+        commandString = "";
+    }
+
     public static void main(String[] args) {
         String test_vals = "move 2\nturn -20";
-
         Command command = new Command(test_vals);
 
     }

@@ -11,7 +11,15 @@ public class Player {
         this.commands =commands;
         this.playerColor = color;
     }
-
+    public String getPlayerName(){
+        return playerName;
+    }
+    public String getPlayerColor(){
+        return playerColor;
+    }
+    public Command getPlayerCommands(){
+        return commands;
+    }
     public String toString(){
         String retString = playerName + "("+playerColor+"): "+commands.toString();
         return retString;
