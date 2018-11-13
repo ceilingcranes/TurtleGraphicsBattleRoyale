@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -16,7 +17,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import main.Command;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewApplication extends Application {
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
@@ -136,17 +139,37 @@ public class ViewApplication extends Application {
 
         // Update board with entered information when submit button is pressed
         Button submitButton = new Button("Submit");
+        ArrayList<Player> players = new ArrayList<>();
+         //TODO: Fix this - will error out. Need to not double-add players when button is clicked more than once.
+        // can add a list of players at the end
+        // validate first, when no errors add all players
+        // Move it all to another function? Or to GameBoard?
         submitButton.setOnAction((event)->{
             board.setNumPlayers(numPlayers.get());
-            String playerNames = "";
+            String playerNameString = "";
+            String[] playerNames = new String[numPlayers.get()];
+            Command[] playerCommands = new Command[numPlayers.get()];
+            int index = 0;
+
             for (PlayerTextFields playerData:playerFields
                  ) {
-                board.addPlayer(playerData.getName().getText(), new Command(playerData.getCommands().getText()));
-                playerNames += playerData.getName().getText();
+                Command commands = new Command(playerData.getCommands().getText());
+                playerNames[index] = playerData.getName().getText();
+                playerCommands[index] = commands;
+                playerNameString += playerData.getName().getText();
+                index++;
+                if (commands.getInvalidCommandLineNumber().size() != 0){
+                    String errorMessage = "Error in following lines: "+commands.getInvalidCommandLineNumber().toString();
+                    Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage);
+                    alert.show();
+                }
+//                    board.addPlayer(playerData.getName().getText(), commands);
             }
-            text.setText(playerNames);
+            board.addPlayers(playerNames, playerCommands);
+            text.setText(playerNameString);
             // TODO: Add game screen transition
         });
+
         GridPane.setConstraints(submitButton, 1,2);
 
         GridPane root = new GridPane();

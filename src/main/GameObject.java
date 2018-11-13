@@ -1,7 +1,7 @@
 package main;
 
 public abstract class GameObject {
-    private Location currentLocation;
+    protected Location currentLocation;
 
     public Location getCurrentLocation() {
         return currentLocation;

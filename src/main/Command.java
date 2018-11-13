@@ -13,9 +13,12 @@ import java.util.regex.Pattern;
  */
 public class Command { // TODO: Implements Iterable
     private LinkedList<LocationChange> commandList = new LinkedList<>();
+    private ArrayList<Integer> invalidCommandLineNumber = new ArrayList<>();
+
     int index = 0; // Make this not terrible
     private String commandString;
-
+    private final String MOVE_REGEX = "move (\\d*)";
+    private final String TURN_REGEX = "turn (-?\\d*)";
 
     // TODO: Add file option, add option for string input with \n or , separations
 //    public main.Command(String filename){
@@ -38,38 +41,59 @@ public class Command { // TODO: Implements Iterable
     }
 
     public void addCommands(String commandString){
+        if (commandString.equals("")){
+            System.out.println("Command input string empty");
+            this.commandList.add(new LocationChange(0,0));
+            return;
+        }
+
         String lines[] = commandString.split("\\n");
         ArrayList<String> commandInputs = new ArrayList<>(Arrays.asList(lines));
 
         for(int i=0; i<commandInputs.size(); i++){
 
             LocationChange next_location = generateLocationChange(commandInputs.get(i));
-            System.out.println("Location Change: "+next_location.getMove());
-            System.out.println("Location Class: "+ next_location.getClass());
-            this.commandList.add(next_location);
+
+            if (next_location == null)
+                this.invalidCommandLineNumber.add(i);
+            else {
+                System.out.println("Location Change: "+next_location.getMove());
+                System.out.println("Location Class: "+ next_location.getClass());
+                this.commandList.add(next_location);
+            }
         }
-
         this.commandString += commandString;
-
     }
 
-    // TODO: Make this system more robust
+    public ArrayList<Integer> getInvalidCommandLineNumber(){
+        return invalidCommandLineNumber;
+    }
+
+    public boolean validateCommand(String input){
+        String toMatch = input.trim();
+        Pattern commandPattern = Pattern.compile(MOVE_REGEX + "|" + TURN_REGEX);
+        Matcher commandMatch = commandPattern.matcher(toMatch);
+        return commandMatch.matches();
+    }
+
     public LocationChange generateLocationChange(String input){
         String toMatch = input.trim();
-        Pattern movePattern = Pattern.compile("move (\\d*)");
+        Pattern movePattern = Pattern.compile(MOVE_REGEX);
         Matcher moveMatch = movePattern.matcher(toMatch);
 
         if (moveMatch.matches()){
             return new LocationChange(Integer.parseInt(moveMatch.group(1)),0);
         }
 
-        Pattern turnPattern = Pattern.compile("turn (-?\\d*)");
+        Pattern turnPattern = Pattern.compile(TURN_REGEX);
         Matcher turnMatch = turnPattern.matcher(toMatch);
 
         if (turnMatch.matches()){
             return new LocationChange(0,Integer.parseInt(turnMatch.group(1)));
         }
-        throw new RuntimeException("main.Command Not valid: "+ toMatch);
+
+        return null;
+//        throw new RuntimeException("main.Command Not valid: "+ toMatch);
     }
 
     public LocationChange getNextLocation(){

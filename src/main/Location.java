@@ -40,4 +40,16 @@ public class Location {
     public void setOrientation(int orientation) {
         this.orientation = orientation;
     }
+
+    public void updateOrientation(int turn){
+        orientation += turn;
+    }
+
+    // Step 1 unit in the given direction 
+    public void makeStep(){
+
+    }
+    public String toString(){
+        return "["+xLocation+", "+yLocation + "], "+orientation+" degrees.";
+    }
 }

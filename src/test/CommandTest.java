@@ -73,6 +73,31 @@ public class CommandTest {
         Assert.assertEquals(l.getTurn(), -2);
     }
 
+
+    @Test
+    public void testValidateCommand_valid_turn(){
+        String validCommand = "turn -22";
+        Assert.assertTrue(c.validateCommand(validCommand));
+    }
+
+    @Test
+    public void testValidateCommand_valid_move(){
+        String validCommand = "move 30";
+        Assert.assertTrue(c.validateCommand(validCommand));
+    }
+
+    @Test
+    public void testValidateCommand_invalid_turn(){
+        String invalidCommand = "turn2";
+        Assert.assertFalse(c.validateCommand(invalidCommand));
+    }
+
+    @Test
+    public void testValidateCommand_invalid_move(){
+        String invalidCommand = "move2";
+        Assert.assertFalse(c.validateCommand(invalidCommand));
+    }
+
     /*@Test
     public void testGenerateLocationChange_invalid_turn(){
         String testString = "turn --2";
