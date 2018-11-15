@@ -1,5 +1,6 @@
 package main;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -8,22 +9,30 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewApplication extends Application {
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
-    private GameBoard board = new GameBoard();
+//    private GameBoard board = new GameBoard();
+    private GameController gameController = new GameController();
 
     class NumPlayersButton implements EventHandler<ActionEvent> {
         private final int number;
@@ -145,7 +154,7 @@ public class ViewApplication extends Application {
         // validate first, when no errors add all players
         // Move it all to another function? Or to GameBoard?
         submitButton.setOnAction((event)->{
-            board.setNumPlayers(numPlayers.get());
+            gameController.getPlayers().setNumPlayers(numPlayers.get());
             String playerNameString = "";
             String[] playerNames = new String[numPlayers.get()];
             Command[] playerCommands = new Command[numPlayers.get()];
@@ -163,10 +172,11 @@ public class ViewApplication extends Application {
                     Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage);
                     alert.show();
                 }
-//                    board.addPlayer(playerData.getName().getText(), commands);
+//                    gameController.addPlayer(playerData.getName().getText(), commands);
             }
-            board.addPlayers(playerNames, playerCommands);
+            gameController.getPlayers().addPlayers(playerNames, playerCommands);
             text.setText(playerNameString);
+            playGameScene(primaryStage);
             // TODO: Add game screen transition
         });
 
@@ -190,8 +200,48 @@ public class ViewApplication extends Application {
         updateStage(primaryStage, sceneGraph, "Player Update");
     }
 
+    private Pane playGameSceneGraph(Stage primaryStage){
+        GridPane root = new GridPane();
+        GridPane gameBoard = gameBoardSceneGraph(primaryStage, 100,100);
+        root.getChildren().add(gameBoard);
+        return root;
+    }
+
+    private GridPane gameBoardSceneGraph(Stage primaryStage, int width, int height){
+        // https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
+
+        int size = 600;
+        Text name1 = new Text("name");
+        GridPane root = new GridPane();
+        Canvas gameBoard = new Canvas(size, size);
+        root.getChildren().addAll(name1, gameBoard);
+        GridPane.setConstraints(gameBoard,1,0);
+        GridPane.setConstraints(name1, 0,0);
+        GraphicsContext gc = gameBoard.getGraphicsContext2D();
+//        gc.setFill(Paint.valueOf("white"));
+
+        final long startNanoTime = System.nanoTime();
+        Image testImage = new Image(getClass().getResource("redturtle.png").toExternalForm());
+
+        new AnimationTimer(){
+            public void handle(long currentNanoTime){
+                double t = (currentNanoTime - startNanoTime) / 1000000000.0;
+                gc.fillRect(10,10,size, size);
+                gc.drawImage(testImage, 50*t,50);
+
+            }
+        }.start();
+
+        return root;
+    }
+
+    private void playGameScene(Stage primaryStage){
+        Pane sceneGraph = playGameSceneGraph(primaryStage);
+        updateStage(primaryStage, sceneGraph, "Gameplay");
+    }
+
     private void updateStage(Stage primaryStage, Pane root, String title){
-        Scene scene = new Scene(root, 1000, 1000);
+        Scene scene = new Scene(root, 1200, 700);
         primaryStage.setTitle(title);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -203,6 +253,7 @@ public class ViewApplication extends Application {
      */
     public void start(Stage primaryStage) {
         startScreenScene(primaryStage);
+//        playGameScene(primaryStage);
     }
 
     public static void main(String[] args) {

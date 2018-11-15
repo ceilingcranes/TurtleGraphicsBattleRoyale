@@ -1,7 +1,7 @@
 package test;
 
 import main.Command;
-import main.GameBoard;
+import main.PlayerList;
 import main.Player;
 import org.testng.Assert;
 
@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import static org.testng.Assert.*;
 
-public class GameBoardTest {
-    GameBoard gb = new GameBoard();
+public class PlayerListTest {
+    PlayerList gb = new PlayerList();
     @org.testng.annotations.Test
     public void testGetNumPlayers() {
         int numPlayers = gb.getNumPlayers();

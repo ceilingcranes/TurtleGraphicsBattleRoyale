@@ -14,11 +14,12 @@ public class Turtle extends GameObject {
         System.out.println("Created new turtle at location "+loc.toString());
     }
 
-    public Location getNextLocation(){
+//    public Location getNextLocation(){
+//        LocationChange locChange =  turtleCommands.getNextLocation();
+//
+//    }
 
-        LocationChange locChange =  turtleCommands.getNextLocation();
 
-    }
 
     public Command getTurtleCommands(){
         return turtleCommands;

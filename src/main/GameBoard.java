@@ -1,52 +1,42 @@
 package main;
 
-import java.util.ArrayList;
-
 public class GameBoard {
-    private int numPlayers;
-    private ArrayList<Player> playerList;
-    private final String[] PLAYER_COLORS = new String[]{"red", "green", "blue", "yellow"};
+    private int width;
+    private int height;
 
-    public GameBoard(){
-        numPlayers = 0;
-        playerList = new ArrayList<>();
+    public GameBoard(int height, int width){
+        this.height = height;
+        this.width = width;
+    }
+    public int getWidth() {
+        return width;
     }
 
-    public int getNumPlayers() {
-        return numPlayers;
+    public void setWidth(int width) {
+        this.width = width;
     }
 
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-        System.out.println("Numplayers updated to "+numPlayers);
+    public int getHeight() {
+        return height;
     }
 
-//    public void addPlayer(Player player){
-//        playerList.add(player);
-//    }
-    public void addPlayer(String playerName, Command playerCommands){
-        // create a new player, add name, color, and commands
-        String color = PLAYER_COLORS[playerList.size()];
-
-        Player player = new Player(playerName, color, playerCommands, new Location(0,0));
-        System.out.println("Adding Player to list: "+player.toString());
-
-        this.playerList.add(player);
+    public void setHeight(int height) {
+        this.height = height;
     }
 
-    public void addPlayers(String[] playerNames, Command[] playerCommands){
-        for(int i = 0; i< playerNames.length; i++){
-            Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i]);
-            System.out.println("Adding new player "+newPlayer.toString());
-            this.playerList.add(newPlayer);
+    /**
+     * Check to see if the location given is valid on the board
+     * @param l: Location to check
+     * @return: True if a valid location, False if invalid
+     */
+    public boolean checkLocationValidity(Location l){
+        boolean valid = true;
+        if (l.getXLocation() >= width || l.getXLocation() < 0){
+            valid = false;
         }
-    }
-
-    public Player getPlayer(int index){
-        return playerList.get(index);
-    }
-
-    public void removePlayer(int index){
-        playerList.remove(index);
+        if (l.getYLocation() >= height || l.getYLocation() < 0){
+            valid = false;
+        }
+        return valid;
     }
 }
