@@ -159,6 +159,7 @@ public class ViewApplication extends Application {
             String[] playerNames = new String[numPlayers.get()];
             Command[] playerCommands = new Command[numPlayers.get()];
             int index = 0;
+            boolean error = false;
 
             for (PlayerTextFields playerData:playerFields
                  ) {
@@ -167,16 +168,18 @@ public class ViewApplication extends Application {
                 playerCommands[index] = commands;
                 playerNameString += playerData.getName().getText();
                 index++;
+
                 if (commands.getInvalidCommandLineNumber().size() != 0){
                     String errorMessage = "Error in following lines: "+commands.getInvalidCommandLineNumber().toString();
                     Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage);
                     alert.show();
+                    error = true;
                 }
 //                    gameController.addPlayer(playerData.getName().getText(), commands);
             }
             gameController.getPlayers().addPlayers(playerNames, playerCommands);
             text.setText(playerNameString);
-            playGameScene(primaryStage);
+            if (!error) playGameScene(primaryStage);
             // TODO: Add game screen transition
         });
 
