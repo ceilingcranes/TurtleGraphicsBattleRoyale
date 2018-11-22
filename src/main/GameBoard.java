@@ -1,5 +1,8 @@
 package main;
 
+/**
+ * Tracks parameters and methods related to the size and shape of the gameboard in use.
+ */
 public class GameBoard {
     private int width;
     private int height;
@@ -8,6 +11,7 @@ public class GameBoard {
         this.height = height;
         this.width = width;
     }
+
     public int getWidth() {
         return width;
     }

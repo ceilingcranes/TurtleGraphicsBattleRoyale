@@ -16,9 +16,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -154,7 +159,6 @@ public class ViewApplication extends Application {
         // validate first, when no errors add all players
         // Move it all to another function? Or to GameBoard?
         submitButton.setOnAction((event)->{
-            gameController.getPlayers().setNumPlayers(numPlayers.get());
             String playerNameString = "";
             String[] playerNames = new String[numPlayers.get()];
             Command[] playerCommands = new Command[numPlayers.get()];
@@ -210,20 +214,82 @@ public class ViewApplication extends Application {
         return root;
     }
 
+    /**
+     * Create the Scene Graph for the actual game board screen, with players, commands, and turtle running.
+     * @param primaryStage The stage associated with the scene
+     * @param width The width of the gameboard
+     * @param height the height of the gameboard
+     * @return GridPane object containing the root of the scene graph.
+     */
     private GridPane gameBoardSceneGraph(Stage primaryStage, int width, int height){
         // https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
 
         int size = 600;
-        Text name1 = new Text("name");
         GridPane root = new GridPane();
+        // Set up even distributions
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setPercentWidth(25);
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setPercentWidth(50);
+        ColumnConstraints column3 = new ColumnConstraints();
+        column3.setPercentWidth(25);
+
+        root.getColumnConstraints().addAll(column1, column2, column3);
         Canvas gameBoard = new Canvas(size, size);
-        root.getChildren().addAll(name1, gameBoard);
+
+        PlayerList players = gameController.getPlayers();
+        System.out.println(players.getNumPlayers());
+//        GridPane[] playerPanes = new GridPane[players.getNumPlayers()];
+        for(int i = 0; i<players.getNumPlayers(); i++){
+            GridPane playerPane = new GridPane();
+
+            StackPane namePane = new StackPane();
+            Text playerName = new Text(players.getPlayer(i).getPlayerName());
+            playerName.setFont(new Font(22));
+            playerName.setWrappingWidth(width);
+            Paint color = Paint.valueOf(players.getPlayer(i).getPlayerColor());
+
+            Rectangle playerBg = new Rectangle(width, 22, color); // TODO: Change this to use a label
+            namePane.getChildren().addAll(playerBg, playerName);
+
+
+            playerPane.getChildren().add(namePane);
+
+            GridPane.setConstraints(namePane, 0, 0);
+            playerPane.setAlignment(Pos.CENTER);
+
+            ArrayList<String> commands = players.getPlayer(i)
+                    .getPlayerTurtle()
+                    .getTurtleCommands()
+                    .getCommandInputs();
+
+            for (int j = 0; j<commands.size(); j++){
+                Text commandString = new Text(commands.get(j));
+                playerPane.getChildren().add(commandString);
+                GridPane.setConstraints(commandString, 0, j+1);
+            }
+
+            switch(i){
+                case 0: GridPane.setConstraints(playerPane, 0, 0);
+                break;
+                case 1: GridPane.setConstraints(playerPane, 0, 1);
+                break;
+                case 2: GridPane.setConstraints(playerPane,2, 0);
+                break;
+                case 3: GridPane.setConstraints(playerPane, 2, 1);
+                break;
+            }
+            root.getChildren().add(playerPane);
+        }
+        root.getChildren().add(gameBoard);
+        GridPane.setRowSpan(gameBoard, 2);
         GridPane.setConstraints(gameBoard,1,0);
-        GridPane.setConstraints(name1, 0,0);
+
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
 //        gc.setFill(Paint.valueOf("white"));
 
         final long startNanoTime = System.nanoTime();
+        // TODO: To get which image to update, generate a string color+classname and make a map to image objects
         Image testImage = new Image(getClass().getResource("redturtle.png").toExternalForm());
 
         new AnimationTimer(){
@@ -231,6 +297,8 @@ public class ViewApplication extends Application {
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
                 gc.fillRect(10,10,size, size);
                 gc.drawImage(testImage, 50*t,50);
+                gc.drawImage(testImage, 50*t, 60);
+                // DrawImage or draw line for line?
 
             }
         }.start();
@@ -255,8 +323,12 @@ public class ViewApplication extends Application {
      * Required method to start the application
      */
     public void start(Stage primaryStage) {
-        startScreenScene(primaryStage);
-//        playGameScene(primaryStage);
+//        startScreenScene(primaryStage);
+        Command[] addCommands = {new Command("move 2"),
+                new Command("move 3\nturn 1"), new Command("turn -2")};
+        String[] playerNames = {"player1", "player2", "player3"};
+        gameController.getPlayers().addPlayers(playerNames, addCommands);
+        playGameScene(primaryStage);
     }
 
     public static void main(String[] args) {

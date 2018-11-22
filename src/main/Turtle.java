@@ -19,8 +19,6 @@ public class Turtle extends GameObject {
 //
 //    }
 
-
-
     public Command getTurtleCommands(){
         return turtleCommands;
     }

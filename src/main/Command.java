@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class Command { // TODO: Implements Iterable
     private LinkedList<LocationChange> commandList = new LinkedList<>();
     private ArrayList<Integer> invalidCommandLineNumber = new ArrayList<>();
+    private ArrayList<String> commandInputs = new ArrayList<>();
 
     int index = 0; // Make this not terrible
     private String commandString;
@@ -48,7 +49,7 @@ public class Command { // TODO: Implements Iterable
         }
 
         String lines[] = commandString.split("\\n");
-        ArrayList<String> commandInputs = new ArrayList<>(Arrays.asList(lines));
+        this.commandInputs = new ArrayList<>(Arrays.asList(lines));
 
         for(int i=0; i<commandInputs.size(); i++){
 
@@ -111,6 +112,10 @@ public class Command { // TODO: Implements Iterable
     public void resetCommands(){
         commandList.clear();
         commandString = "";
+    }
+
+    public ArrayList<String> getCommandInputs(){
+        return this.commandInputs;
     }
 
     public static void main(String[] args) {

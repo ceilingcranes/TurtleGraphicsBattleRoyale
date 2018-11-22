@@ -2,26 +2,36 @@ package main;
 
 import java.util.ArrayList;
 
+/**
+ * Tracks methods for adding, removing, and accessing Player objects.
+ * @Author Maxine Hartnett
+ */
 public class PlayerList {
 
     private int numPlayers;
     private ArrayList<Player> playerList;
-    private final String[] PLAYER_COLORS = new String[]{"red", "green", "blue", "yellow"};
+    // Red, Green, Blue, Yellow
+    private final String[] PLAYER_COLORS = new String[]{"0xff8f80", "0xa3d977", "0x5abaa7", "0xffdf71"};
 
     public PlayerList(){
         numPlayers = 0;
         playerList = new ArrayList<>();
         System.out.println("Initializing list");
     }
+
+    /**
+     * Get the number of players.
+     * @return number of players
+     */
     public int getNumPlayers() {
         return numPlayers;
     }
 
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-        System.out.println("Numplayers updated to "+numPlayers);
-    }
-
+    /**
+     * Create and add a new Player, automatically setting the color and location.
+     * @param playerName The name of the player
+     * @param playerCommands The Command object containing the entered commands for a player.
+     */
     public void addPlayer(String playerName, Command playerCommands){
         // create a new player, add name, color, and commands
         String color = PLAYER_COLORS[playerList.size()];
@@ -30,20 +40,37 @@ public class PlayerList {
         System.out.println("Adding Player to list: "+player.toString());
 
         this.playerList.add(player);
+        this.numPlayers++;
     }
 
+    /**
+     * Create and add multiple players, automatically setting color and location.
+     * @param playerNames List of player names
+     * @param playerCommands List of Command objects representing player commands
+     */
     public void addPlayers(String[] playerNames, Command[] playerCommands){
         for(int i = 0; i< playerNames.length; i++){
             Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i]);
             System.out.println("Adding new player "+newPlayer.toString());
             this.playerList.add(newPlayer);
         }
+        this.numPlayers+= playerNames.length;
     }
 
+    /**
+     * Get a player object
+     * @param index The index of the player
+     * @return Given Player object
+     */
     public Player getPlayer(int index){
         return playerList.get(index);
     }
 
+
+    /**
+     * Delete a player from the player list.
+     * @param index Index of the Player to remove
+     */
     public void removePlayer(int index){
         playerList.remove(index);
     }

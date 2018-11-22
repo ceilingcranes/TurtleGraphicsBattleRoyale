@@ -4,7 +4,7 @@ import main.Command;
 
 public class Player {
     String playerName;
-    String playerColor; // should this be a string?
+    String playerColor;
     Turtle playerTurtle;
 
     public Player(String name, String color, Command commands, Location startLoc){
@@ -15,7 +15,7 @@ public class Player {
 
     public Player(String name, String color, Command commands){
         this.playerName = name;
-        this.playerColor = name;
+        this.playerColor = color;
         this.playerTurtle = new Turtle(commands);
     }
 
