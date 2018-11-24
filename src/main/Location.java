@@ -18,6 +18,16 @@ public class Location {
         this.orientation = startOrientation;
     }
 
+    /**
+     * Return the distance between location and another location
+     * @param l Location object to find distance to
+     * @return Distance from l -> current Location
+     */
+    public double distance(Location l){
+        return Math.sqrt(Math.pow(l.getXLocation() - this.xLocation,2)+
+                Math.pow(l.getYLocation() - this.yLocation, 2));
+    }
+
     public int getXLocation() {
         return xLocation;
     }
@@ -52,20 +62,24 @@ public class Location {
         orientation += turn;
     }
 
-    // Step 1 unit in the given direction 
-    public void takeStep(){
-        // 0 == right
-        // 90 == up
-        // 180 == left
-        // 270 == down
-        int change = orientation/90;
-        switch (change){
-            case 0: this.xLocation++;
-            case 1: this.yLocation++;
-            case 3: this.xLocation--;
-            case 4: this.yLocation--;
-        }
+    /**
+     * Step 1 stepsize in the given direction
+      * @param stepSize The number of units to move in a step
+     */
+    public void takeStep(int stepSize){
+        // X+Y = stepSize
+        // Y/X = orientation
+        // X = stepSize - Y
+        // Y/(stepSize - Y) = orientation
+
+        int yChange = orientation * stepSize/(orientation+1);
+        int xChange = stepSize - yChange;
+
+        this.xLocation += xChange;
+        this.yLocation += yChange;
+
     }
+
     public String toString(){
         return "["+xLocation+", "+yLocation + "], "+orientation+" degrees.";
     }

@@ -7,7 +7,7 @@ public class GameBoard {
     private int width;
     private int height;
 
-    public GameBoard(int height, int width){
+    public GameBoard(int width, int height){
         this.height = height;
         this.width = width;
     }

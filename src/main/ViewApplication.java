@@ -32,12 +32,16 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ViewApplication extends Application {
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
+    private final int BOARDSIZE = 600;
+    public final static int IMAGE_SIZE = 20;
 //    private GameBoard board = new GameBoard();
-    private GameController gameController = new GameController();
+    private GameController gameController = new GameController(BOARDSIZE, BOARDSIZE);
 
     class NumPlayersButton implements EventHandler<ActionEvent> {
         private final int number;
@@ -209,7 +213,7 @@ public class ViewApplication extends Application {
 
     private Pane playGameSceneGraph(Stage primaryStage){
         GridPane root = new GridPane();
-        GridPane gameBoard = gameBoardSceneGraph(primaryStage, 100,100);
+        GridPane gameBoard = gameBoardSceneGraph(primaryStage);
         root.getChildren().add(gameBoard);
         return root;
     }
@@ -217,14 +221,11 @@ public class ViewApplication extends Application {
     /**
      * Create the Scene Graph for the actual game board screen, with players, commands, and turtle running.
      * @param primaryStage The stage associated with the scene
-     * @param width The width of the gameboard
-     * @param height the height of the gameboard
      * @return GridPane object containing the root of the scene graph.
      */
-    private GridPane gameBoardSceneGraph(Stage primaryStage, int width, int height){
+    private GridPane gameBoardSceneGraph(Stage primaryStage){
         // https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
 
-        int size = 600;
         GridPane root = new GridPane();
         // Set up even distributions
         ColumnConstraints column1 = new ColumnConstraints();
@@ -235,7 +236,7 @@ public class ViewApplication extends Application {
         column3.setPercentWidth(25);
 
         root.getColumnConstraints().addAll(column1, column2, column3);
-        Canvas gameBoard = new Canvas(size, size);
+        Canvas gameBoard = new Canvas(BOARDSIZE, BOARDSIZE);
 
         PlayerList players = gameController.getPlayers();
         System.out.println(players.getNumPlayers());
@@ -246,10 +247,10 @@ public class ViewApplication extends Application {
             StackPane namePane = new StackPane();
             Text playerName = new Text(players.getPlayer(i).getPlayerName());
             playerName.setFont(new Font(22));
-            playerName.setWrappingWidth(width);
+            playerName.setWrappingWidth(100);
             Paint color = Paint.valueOf(players.getPlayer(i).getPlayerColor());
 
-            Rectangle playerBg = new Rectangle(width, 22, color); // TODO: Change this to use a label
+            Rectangle playerBg = new Rectangle(playerName.getWrappingWidth(), 22, color); // TODO: Change this to use a label
             namePane.getChildren().addAll(playerBg, playerName);
 
 
@@ -289,17 +290,40 @@ public class ViewApplication extends Application {
 //        gc.setFill(Paint.valueOf("white"));
 
         final long startNanoTime = System.nanoTime();
-        // TODO: To get which image to update, generate a string color+classname and make a map to image objects
-        Image testImage = new Image(getClass().getResource("redturtle.png").toExternalForm());
+
+        Image redTurtle = new Image(getClass().getResource("redturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image blueTurtle = new Image(getClass().getResource("blueturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image greenTurtle = new Image(getClass().getResource("greenturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image yellowTurtle = new Image(getClass().getResource("yellowturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
+
+        Map<String, Image> turtleMap = new HashMap<String, Image>();
+        turtleMap.put("0xff8f80", redTurtle);
+        turtleMap.put("0xa3d977", greenTurtle);
+        turtleMap.put("0x5abaa7", blueTurtle);
+        turtleMap.put("0xffdf71", yellowTurtle);
+
 
         new AnimationTimer(){
+            private int timeCounter = 0;
             public void handle(long currentNanoTime){
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
-                gc.fillRect(10,10,size, size);
-                gc.drawImage(testImage, 50*t,50);
-                gc.drawImage(testImage, 50*t, 60);
-                // DrawImage or draw line for line?
-
+                if (t > timeCounter) { // Move every 1 second
+                    timeCounter++;
+                    gc.fillRect(0, 0, BOARDSIZE, BOARDSIZE);
+                    ArrayList<GameObject> objects = gameController.getObjects();
+                    gc.drawImage(yellowTurtle, 0,0);
+                    gc.drawImage(redTurtle, BOARDSIZE-IMAGE_SIZE, 0);
+                    gc.drawImage(blueTurtle, BOARDSIZE-IMAGE_SIZE, BOARDSIZE-IMAGE_SIZE);
+                    gc.drawImage(greenTurtle,0, BOARDSIZE-IMAGE_SIZE);
+                    for (GameObject obj : objects) {
+                        if (obj instanceof Turtle) {
+                            String color = obj.getObjectColor();
+                            Location turtleLoc = obj.getCurrentLocation();
+                            gc.drawImage(turtleMap.get(color), turtleLoc.getXLocation(), turtleLoc.getYLocation());
+                        }
+                    }
+                    // DrawImage or draw line for line?
+                }
             }
         }.start();
 
@@ -325,8 +349,8 @@ public class ViewApplication extends Application {
     public void start(Stage primaryStage) {
 //        startScreenScene(primaryStage);
         Command[] addCommands = {new Command("move 2"),
-                new Command("move 3\nturn 1"), new Command("turn -2")};
-        String[] playerNames = {"player1", "player2", "player3"};
+                new Command("move 3\nturn 1")};
+        String[] playerNames = {"player1", "player2"};
         gameController.getPlayers().addPlayers(playerNames, addCommands);
         playGameScene(primaryStage);
     }

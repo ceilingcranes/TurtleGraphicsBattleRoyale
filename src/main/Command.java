@@ -102,11 +102,12 @@ public class Command { // TODO: Implements Iterable
             return new LocationChange(0,0);
         }
         else{
+            if (index == commandList.size())
+                index = 0;
             LocationChange nextLoc = commandList.get(index);
             index ++;
             return nextLoc;
         }
-
     }
 
     public void resetCommands(){

@@ -74,4 +74,12 @@ public class PlayerList {
     public void removePlayer(int index){
         playerList.remove(index);
     }
+
+    public ArrayList<Player> getPlayerList(){
+        return playerList;
+    }
+
+    public String[] getPlayerColors(){
+        return this.PLAYER_COLORS;
+    }
 }
