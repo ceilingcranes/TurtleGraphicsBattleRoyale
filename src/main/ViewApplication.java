@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -16,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -26,6 +28,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 import java.io.BufferedInputStream;
@@ -38,7 +42,7 @@ import java.util.Map;
 
 public class ViewApplication extends Application {
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
-    private final int BOARDSIZE = 600;
+    public final static int BOARDSIZE = 600;
     public final static int IMAGE_SIZE = 20;
 //    private GameBoard board = new GameBoard();
     private GameController gameController = new GameController(BOARDSIZE, BOARDSIZE);
@@ -285,8 +289,8 @@ public class ViewApplication extends Application {
         root.getChildren().add(gameBoard);
         GridPane.setRowSpan(gameBoard, 2);
         GridPane.setConstraints(gameBoard,1,0);
-
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
+        // TODO: Add border using css
 //        gc.setFill(Paint.valueOf("white"));
 
         final long startNanoTime = System.nanoTime();
@@ -300,14 +304,15 @@ public class ViewApplication extends Application {
         Image yellowTurtle = new Image(getClass().getResource("images/yellowturtle.png").toExternalForm(),
                 IMAGE_SIZE,IMAGE_SIZE, true, false);
 
-        Map<String, Image> turtleMap = new HashMap<String, Image>();
-        turtleMap.put("0xff8f80", redTurtle);
-        turtleMap.put("0xa3d977", greenTurtle);
-        turtleMap.put("0x5abaa7", blueTurtle);
-        turtleMap.put("0xffdf71", yellowTurtle);
+        Map<String, ImageView> turtleMap = new HashMap<String, ImageView>();
+        turtleMap.put("0xff8f80", new ImageView(redTurtle));
+        turtleMap.put("0xa3d977", new ImageView(greenTurtle));
+        turtleMap.put("0x5abaa7", new ImageView(blueTurtle));
+        turtleMap.put("0xffdf71", new ImageView(yellowTurtle));
 
 
         new AnimationTimer(){
+            private SnapshotParameters params = new SnapshotParameters();
             private int timeCounter = 0;
             public void handle(long currentNanoTime){
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
@@ -316,14 +321,17 @@ public class ViewApplication extends Application {
                     gc.fillRect(0, 0, BOARDSIZE, BOARDSIZE);
                     ArrayList<GameObject> objects = gameController.getObjects();
                     gc.drawImage(yellowTurtle, 0,0);
-                    gc.drawImage(redTurtle, BOARDSIZE-IMAGE_SIZE, 0);
-                    gc.drawImage(blueTurtle, BOARDSIZE-IMAGE_SIZE, BOARDSIZE-IMAGE_SIZE);
-                    gc.drawImage(greenTurtle,0, BOARDSIZE-IMAGE_SIZE);
+                    ImageView testView = new ImageView(redTurtle);
+                    testView.setRotate(90);
+                    gc.drawImage(testView.snapshot(params, null), BOARDSIZE-IMAGE_SIZE, 0);
                     for (GameObject obj : objects) {
                         if (obj instanceof Turtle) {
                             String color = obj.getObjectColor();
                             Location turtleLoc = obj.getCurrentLocation();
-                            gc.drawImage(turtleMap.get(color), turtleLoc.getXLocation(), turtleLoc.getYLocation());
+                            ImageView turtle = turtleMap.get(color);
+                            turtle.setRotate(turtleLoc.getOrientation());
+                            gc.drawImage(turtle.snapshot(params, null),
+                                    turtleLoc.getXLocation(), turtleLoc.getYLocation());
                         }
                         if (obj instanceof Line){
                             Line line = (Line) obj;
@@ -363,7 +371,7 @@ public class ViewApplication extends Application {
     public void start(Stage primaryStage) {
 //        startScreenScene(primaryStage);
         Command[] addCommands = {new Command("move 2"),
-                new Command("move 3\nturn 1")};
+                new Command("move 3\nturn 10")};
         String[] playerNames = {"player1", "player2"};
         gameController.getPlayers().addPlayers(playerNames, addCommands);
         playGameScene(primaryStage);

@@ -73,13 +73,48 @@ public class Location implements Comparable<Location> {
      */
     public void takeStep(int stepSize){
         // X+Y = stepSize
-        // Y/X = orientation
+        // Y/X = tan(orientation)
         // X = stepSize - Y
-        // Y/(stepSize - Y) = orientation
 
-        int yChange = orientation * stepSize/(orientation+1);
-        int xChange = stepSize - yChange;
+        int yChange = 0;
+        int xChange = 0;
 
+        // orientation corresponds to unit circle
+        switch(orientation){
+            case 0:
+                xChange = stepSize;
+                break;
+            case 90:
+                xChange = 0;
+                break;
+            case 180:
+                xChange = -stepSize;
+                break;
+            case 270:
+                xChange = 0;
+                break;
+            default:
+//                yChange =(int)((Math.tan(orientation)*stepSize)/(1+Math.tan(orientation)));
+//                xChange = stepSize - yChange;
+                xChange = (int)(stepSize/(Math.tan(Math.toRadians(orientation))+1));
+        }
+
+        if(orientation >= 0 && orientation<90){
+            System.out.println("Between 0 and 90!");
+            yChange = stepSize - Math.abs(xChange);
+        }
+        if(orientation >= 90 && orientation < 180){
+            yChange = stepSize + Math.abs(xChange);
+        }
+        if (orientation >=180 && orientation < 270){
+            yChange = -stepSize - Math.abs(xChange);
+        }
+        if (orientation >= 270 && orientation < 360){
+            yChange = Math.abs(xChange) - stepSize;
+        }
+//        int yChange = or * stepSize/(or+1);
+
+        System.out.println("("+orientation+") Moving "+xChange+" units by "+yChange+" units.");
         this.xLocation += xChange;
         this.yLocation += yChange;
 

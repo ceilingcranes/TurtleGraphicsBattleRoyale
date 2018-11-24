@@ -12,7 +12,7 @@ public class GameController {
     // GameObjects.
     private PlayerList players;
     private GameBoard board;
-    public static final int STEPSIZE = 60;
+    public static final int STEPSIZE = 10;
 
     public GameController(){
         players = new PlayerList();

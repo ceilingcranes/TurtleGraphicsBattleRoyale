@@ -27,6 +27,7 @@ public class Turtle extends GameObject {
     /**
      * Update the turtle's location by either taking a step within the current MOVE command, or by going to the next
      * command and updating the orientation/steps left to take.
+     * @return true if the turtle moved in space, or false if the turtle didn't move (e.g. turned)
      */
     public boolean update(){
         if (stepsToTake == 0) {
@@ -42,7 +43,10 @@ public class Turtle extends GameObject {
         return false;
     }
 
-
+    /**
+     *
+     * @return
+     */
     public Command getTurtleCommands(){
         return turtleCommands;
     }

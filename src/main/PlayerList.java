@@ -50,7 +50,9 @@ public class PlayerList {
      */
     public void addPlayers(String[] playerNames, Command[] playerCommands){
         for(int i = 0; i< playerNames.length; i++){
-            Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i]);
+            Location startLoc = new Location((int)(ViewApplication.BOARDSIZE/2),
+                    (int)(ViewApplication.BOARDSIZE/2));
+            Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i], startLoc);
             System.out.println("Adding new player "+newPlayer.toString());
             this.playerList.add(newPlayer);
         }
