@@ -23,6 +23,7 @@ public class Line extends GameObject{
     public Line(Location startLocation, Location endLocation, String color){
         this.startLocation = startLocation;
         this.endLocation = endLocation;
+        currentLocation = startLocation;
         objectColor = color;
     }
 
@@ -50,6 +51,7 @@ public class Line extends GameObject{
     }
 
     public void setEndLocation(Location endLocation) {
+        System.out.println("UPDATING END POINT OF "+this);
         this.endLocation = endLocation;
         length = startLocation.distance(endLocation);
     }

@@ -1,6 +1,6 @@
 package main;
 
-public class Location {
+public class Location implements Comparable<Location> {
     // TODO: Make this a float? Allow for angles beyond 90? Depends on system for drawing gameboard.
     private int xLocation;
     private int yLocation;
@@ -12,6 +12,11 @@ public class Location {
         this.orientation = 0;
     }
 
+    public Location(Location l){
+        this.xLocation = l.getXLocation();
+        this.yLocation = l.getYLocation();
+        this.orientation = l.getOrientation();
+    }
     public Location(int startX, int startY, int startOrientation){
         this.xLocation = startX;
         this.yLocation = startY;
@@ -80,6 +85,12 @@ public class Location {
 
     }
 
+    public int compareTo(Location l2){
+        if (l2.getXLocation() == xLocation && l2.getYLocation() == yLocation){
+            return 0;
+        }
+        else return -1;
+    }
     public String toString(){
         return "["+xLocation+", "+yLocation + "], "+orientation+" degrees.";
     }

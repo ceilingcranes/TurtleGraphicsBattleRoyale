@@ -291,10 +291,14 @@ public class ViewApplication extends Application {
 
         final long startNanoTime = System.nanoTime();
 
-        Image redTurtle = new Image(getClass().getResource("redturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
-        Image blueTurtle = new Image(getClass().getResource("blueturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
-        Image greenTurtle = new Image(getClass().getResource("greenturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
-        Image yellowTurtle = new Image(getClass().getResource("yellowturtle.png").toExternalForm(),IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image redTurtle = new Image(getClass().getResource("images/redturtle.png").toExternalForm(),
+                IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image blueTurtle = new Image(getClass().getResource("images/blueturtle.png").toExternalForm(),
+                IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image greenTurtle = new Image(getClass().getResource("images/greenturtle.png").toExternalForm(),
+                IMAGE_SIZE,IMAGE_SIZE, true, false);
+        Image yellowTurtle = new Image(getClass().getResource("images/yellowturtle.png").toExternalForm(),
+                IMAGE_SIZE,IMAGE_SIZE, true, false);
 
         Map<String, Image> turtleMap = new HashMap<String, Image>();
         turtleMap.put("0xff8f80", redTurtle);
@@ -320,6 +324,16 @@ public class ViewApplication extends Application {
                             String color = obj.getObjectColor();
                             Location turtleLoc = obj.getCurrentLocation();
                             gc.drawImage(turtleMap.get(color), turtleLoc.getXLocation(), turtleLoc.getYLocation());
+                        }
+                        if (obj instanceof Line){
+                            Line line = (Line) obj;
+//                            gc.setFill(Paint.valueOf(line.getObjectColor()));
+                            gc.setFill(Paint.valueOf("white"));
+
+                            gc.strokeLine(line.getStartLocation().getXLocation(),
+                                    line.getStartLocation().getYLocation(),
+                                    line.getEndLocation().getXLocation(),
+                                    line.getEndLocation().getYLocation());
                         }
                     }
                     // DrawImage or draw line for line?

@@ -28,7 +28,7 @@ public class Turtle extends GameObject {
      * Update the turtle's location by either taking a step within the current MOVE command, or by going to the next
      * command and updating the orientation/steps left to take.
      */
-    public void update(){
+    public boolean update(){
         if (stepsToTake == 0) {
             LocationChange nextLoc = turtleCommands.getNextLocation();
             stepsToTake = nextLoc.getMove();
@@ -37,7 +37,9 @@ public class Turtle extends GameObject {
         if (stepsToTake>0){
             currentLocation.takeStep(GameController.STEPSIZE);
             stepsToTake--;
+            return true;
         }
+        return false;
     }
 
 

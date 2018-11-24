@@ -79,7 +79,6 @@ public class GameController {
 
     // TODO: Add capacity for turtle to "bounce off" wall at same angle
     public void checkObjectLocation(GameObject obj){
-        System.out.println("Object location before redirect: "+obj.currentLocation);
         Location currentLocation = obj.getCurrentLocation();
         if (currentLocation.getXLocation() < 0) {
             obj.setCurrentLocation(new Location(0,currentLocation.getYLocation()));
@@ -93,6 +92,5 @@ public class GameController {
         if (currentLocation.getYLocation() >= board.getHeight()- ViewApplication.IMAGE_SIZE){
             obj.setCurrentLocation(new Location(currentLocation.getXLocation(), board.getHeight()- ViewApplication.IMAGE_SIZE));
         }
-        System.out.println("Object location after redirect: "+obj.currentLocation);
     }
 }

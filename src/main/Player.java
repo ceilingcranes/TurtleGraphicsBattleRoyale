@@ -70,9 +70,10 @@ public class Player {
      * Call update on the player's turtle, and update list of lines controlled by that player if the turtle moved.
      */
     public void update(){
-        Location turtStartLoc = playerTurtle.getCurrentLocation();
-        playerTurtle.update();
-        if (turtStartLoc == playerTurtle.getCurrentLocation()){
+        Location turtStartLoc = new Location(playerTurtle.getCurrentLocation().getXLocation(), playerTurtle.getCurrentLocation().getYLocation());
+        boolean moved = playerTurtle.update();
+//        if (turtStartLoc.compareTo(playerTurtle.getCurrentLocation())==0){
+        if (!moved){
             currentLine = null;
         }
         else{
@@ -81,8 +82,10 @@ public class Player {
                 currentLine = new Line(turtStartLoc, playerTurtle.getCurrentLocation(), playerColor);
                 playerLines.add(currentLine);
             }
-            currentLine.setEndLocation(playerTurtle.getCurrentLocation());
+            currentLine.setEndLocation(new Location(playerTurtle.getCurrentLocation()));
+            System.out.println("Updating end location of "+currentLine);
             playerLines.set(playerLines.size()-1, currentLine);
+            System.out.println("Updated playerLines: "+playerLines);
         }
     }
 
