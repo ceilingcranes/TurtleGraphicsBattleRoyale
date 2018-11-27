@@ -1,5 +1,6 @@
 package main;
 
+import javax.management.monitor.GaugeMonitor;
 import java.util.ArrayList;
 
 /**
@@ -12,11 +13,19 @@ public class PlayerList {
     private ArrayList<Player> playerList;
     // Red, Green, Blue, Yellow
     private final String[] PLAYER_COLORS = new String[]{"0xff8f80", "0xa3d977", "0x5abaa7", "0xffdf71"};
+    private Location[] startingLocations = new Location[4];
 
     public PlayerList(){
         numPlayers = 0;
         playerList = new ArrayList<>();
-        System.out.println("Initializing list");
+
+        for (int i = 0; i< 4; i++){
+            int xLoc = ViewApplication.BOARDSIZE/2 + 5*GameController.STEPSIZE*(i%2);
+            int yLoc = ViewApplication.BOARDSIZE/2 + 5*GameController.STEPSIZE*(i/2);
+            startingLocations[i] = new Location(xLoc, yLoc);
+        }
+
+
     }
 
     /**
@@ -50,9 +59,7 @@ public class PlayerList {
      */
     public void addPlayers(String[] playerNames, Command[] playerCommands){
         for(int i = 0; i< playerNames.length; i++){
-            Location startLoc = new Location((int)(ViewApplication.BOARDSIZE/2),
-                    (int)(ViewApplication.BOARDSIZE/2));
-            Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i], startLoc);
+            Player newPlayer = new Player(playerNames[i], PLAYER_COLORS[i], playerCommands[i], startingLocations[i]);
             System.out.println("Adding new player "+newPlayer.toString());
             this.playerList.add(newPlayer);
         }
@@ -81,6 +88,13 @@ public class PlayerList {
         return playerList;
     }
 
+    public void resetAllPlayers(){
+        int index = 0;
+        for (Player p: playerList){
+            p.resetPlayer(startingLocations[index]);
+            index++;
+        }
+    }
     public String[] getPlayerColors(){
         return this.PLAYER_COLORS;
     }

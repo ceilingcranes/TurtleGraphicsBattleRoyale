@@ -1,12 +1,11 @@
 package main;
 
 public class Location implements Comparable<Location> {
-    // TODO: Make this a float? Allow for angles beyond 90? Depends on system for drawing gameboard.
-    private int xLocation;
-    private int yLocation;
-    private int orientation;
+    private double xLocation;
+    private double yLocation;
+    private double orientation;
 
-    public Location(int startX, int startY){
+    public Location(double startX, double startY){
         this.xLocation = startX;
         this.yLocation = startY;
         this.orientation = 0;
@@ -17,7 +16,7 @@ public class Location implements Comparable<Location> {
         this.yLocation = l.getYLocation();
         this.orientation = l.getOrientation();
     }
-    public Location(int startX, int startY, int startOrientation){
+    public Location(double startX, double startY, double startOrientation){
         this.xLocation = startX;
         this.yLocation = startY;
         this.orientation = startOrientation;
@@ -33,7 +32,7 @@ public class Location implements Comparable<Location> {
                 Math.pow(l.getYLocation() - this.yLocation, 2));
     }
 
-    public int getXLocation() {
+    public double getXLocation() {
         return xLocation;
     }
 
@@ -41,7 +40,7 @@ public class Location implements Comparable<Location> {
         this.xLocation = xLocation;
     }
 
-    public int getYLocation() {
+    public double getYLocation() {
         return yLocation;
     }
 
@@ -49,26 +48,27 @@ public class Location implements Comparable<Location> {
         this.yLocation = yLocation;
     }
 
-    public int getOrientation() {
+    public double getOrientation() {
         return orientation;
     }
 
-    public void setOrientation(int orientation) {
+    public void setOrientation(double orientation) {
         this.orientation = orientation;
         if (this.orientation < 0){
             this.orientation += 360;
         }
-        if (this.orientation > 360){
+        if (this.orientation >= 360){
             this.orientation -= 360;
         }
     }
 
-    public void updateOrientation(int turn){
-        orientation += turn;
+    public void updateOrientation(double turn){
+        this.setOrientation(orientation + turn);
     }
 
     /**
-     * Step 1 stepsize in the given direction
+     * Step 1 stepsize in the given direction, calculated by finding the X and Y changes that will sum to stepSize
+     * while maintaining the correct angle (i.e., tan(angle) = Y/X)
       * @param stepSize The number of units to move in a step
      */
     public void takeStep(int stepSize){
@@ -76,48 +76,11 @@ public class Location implements Comparable<Location> {
         // Y/X = tan(orientation)
         // X = stepSize - Y
 
-        int yChange = 0;
-        int xChange = 0;
+        double yChange =(stepSize*Math.cos(Math.toRadians(orientation)));
+        double xChange = (stepSize * Math.sin(Math.toRadians(orientation)));
 
-        // orientation corresponds to unit circle
-        switch(orientation){
-            case 0:
-                xChange = stepSize;
-                break;
-            case 90:
-                xChange = 0;
-                break;
-            case 180:
-                xChange = -stepSize;
-                break;
-            case 270:
-                xChange = 0;
-                break;
-            default:
-//                yChange =(int)((Math.tan(orientation)*stepSize)/(1+Math.tan(orientation)));
-//                xChange = stepSize - yChange;
-                xChange = (int)(stepSize/(Math.tan(Math.toRadians(orientation))+1));
-        }
-
-        if(orientation >= 0 && orientation<90){
-            System.out.println("Between 0 and 90!");
-            yChange = stepSize - Math.abs(xChange);
-        }
-        if(orientation >= 90 && orientation < 180){
-            yChange = stepSize + Math.abs(xChange);
-        }
-        if (orientation >=180 && orientation < 270){
-            yChange = -stepSize - Math.abs(xChange);
-        }
-        if (orientation >= 270 && orientation < 360){
-            yChange = Math.abs(xChange) - stepSize;
-        }
-//        int yChange = or * stepSize/(or+1);
-
-        System.out.println("("+orientation+") Moving "+xChange+" units by "+yChange+" units.");
         this.xLocation += xChange;
-        this.yLocation += yChange;
-
+        this.yLocation -= yChange;
     }
 
     public int compareTo(Location l2){

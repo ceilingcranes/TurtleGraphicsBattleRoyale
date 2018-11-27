@@ -2,6 +2,7 @@ package main;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -12,32 +13,22 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ViewApplication extends Application {
@@ -293,8 +284,6 @@ public class ViewApplication extends Application {
         // TODO: Add border using css
 //        gc.setFill(Paint.valueOf("white"));
 
-        final long startNanoTime = System.nanoTime();
-
         Image redTurtle = new Image(getClass().getResource("images/redturtle.png").toExternalForm(),
                 IMAGE_SIZE,IMAGE_SIZE, true, false);
         Image blueTurtle = new Image(getClass().getResource("images/blueturtle.png").toExternalForm(),
@@ -310,20 +299,25 @@ public class ViewApplication extends Application {
         turtleMap.put("0x5abaa7", new ImageView(blueTurtle));
         turtleMap.put("0xffdf71", new ImageView(yellowTurtle));
 
-
-        new AnimationTimer(){
+        AnimationTimer timer = new AnimationTimer(){
             private SnapshotParameters params = new SnapshotParameters();
             private int timeCounter = 0;
+            private long startNanoTime = 0;
+
+            @Override
+            public void start(){
+                startNanoTime = System.nanoTime();
+                super.start();
+            }
+
             public void handle(long currentNanoTime){
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
                 if (t > timeCounter) { // Move every 1 second
                     timeCounter++;
+                    gc.setFill(Paint.valueOf("white"));
                     gc.fillRect(0, 0, BOARDSIZE, BOARDSIZE);
                     ArrayList<GameObject> objects = gameController.getObjects();
-                    gc.drawImage(yellowTurtle, 0,0);
-                    ImageView testView = new ImageView(redTurtle);
-                    testView.setRotate(90);
-                    gc.drawImage(testView.snapshot(params, null), BOARDSIZE-IMAGE_SIZE, 0);
+
                     for (GameObject obj : objects) {
                         if (obj instanceof Turtle) {
                             String color = obj.getObjectColor();
@@ -334,21 +328,43 @@ public class ViewApplication extends Application {
                                     turtleLoc.getXLocation(), turtleLoc.getYLocation());
                         }
                         if (obj instanceof Line){
-                            Line line = (Line) obj;
-//                            gc.setFill(Paint.valueOf(line.getObjectColor()));
-                            gc.setFill(Paint.valueOf("white"));
+                            Line lineObj = (Line) obj;
+                            gc.setStroke(Paint.valueOf(lineObj.getObjectColor()));
 
-                            gc.strokeLine(line.getStartLocation().getXLocation(),
-                                    line.getStartLocation().getYLocation(),
-                                    line.getEndLocation().getXLocation(),
-                                    line.getEndLocation().getYLocation());
+                            gc.strokeLine(lineObj.getStartLocation().getXLocation(),
+                                    lineObj.getStartLocation().getYLocation(),
+                                    lineObj.getEndLocation().getXLocation(),
+                                    lineObj.getEndLocation().getYLocation());
                         }
                     }
-                    // DrawImage or draw line for line?
+                    Player winningPlayer = gameController.checkLose();
+                    if (winningPlayer != null){
+                        Alert winAlert = new Alert(Alert.AlertType.INFORMATION, winningPlayer.getPlayerName()+" " +
+                                "is the loser of this round!"
+                        );
+
+                        Platform.runLater(winAlert::showAndWait);
+                        gameController.resetGame();
+                        this.stop();
+//                                .ifPresent(response ->{
+//                            if(response == ButtonType.NO){
+//                                gameController.resetGame();
+//                            }
+//                            else if (response == ButtonType.YES){
+//                                playerCreationScene(primaryStage);
+//                            }
+//                        }));
+                    }
                 }
             }
-        }.start();
+        };
 
+        Button startButton = new Button("Start");
+        startButton.setOnAction((event)->{
+            timer.start();
+        });
+        root.getChildren().add(startButton);
+        GridPane.setConstraints(startButton, 2,2);
         return root;
     }
 
@@ -370,8 +386,9 @@ public class ViewApplication extends Application {
      */
     public void start(Stage primaryStage) {
 //        startScreenScene(primaryStage);
-        Command[] addCommands = {new Command("move 2"),
-                new Command("move 3\nturn 10")};
+        Command[] addCommands = {new Command("turn -90\nmove 2\nturn 30\nmove 4"),
+                new Command("turn 45\nmove 100")
+        };
         String[] playerNames = {"player1", "player2"};
         gameController.getPlayers().addPlayers(playerNames, addCommands);
         playGameScene(primaryStage);

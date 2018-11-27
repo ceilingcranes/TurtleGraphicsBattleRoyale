@@ -16,14 +16,14 @@ public class Line extends GameObject{
         startLocation = new Location(xStart, yStart);
         endLocation = new Location(xEnd, yEnd);
         length = startLocation.distance(endLocation);
-        currentLocation = startLocation;
+        currentLocation = endLocation;
         objectColor = color;
     }
 
     public Line(Location startLocation, Location endLocation, String color){
         this.startLocation = startLocation;
         this.endLocation = endLocation;
-        currentLocation = startLocation;
+        currentLocation = endLocation;
         objectColor = color;
     }
 
@@ -36,7 +36,7 @@ public class Line extends GameObject{
         // If dist(A, C) + dist(B, C) == dist(A, B), C lies on the line between A and B
         double onLine = startLocation.distance(checkLocation) + endLocation.distance(checkLocation);
         // dist(A, C) or dist(B, C) will be greater
-        if(onLine - length < GameController.STEPSIZE){
+        if(onLine - length < GameController.STEPSIZE/2){
             return true;
         }
         return false;
@@ -53,6 +53,7 @@ public class Line extends GameObject{
     public void setEndLocation(Location endLocation) {
         this.endLocation = endLocation;
         length = startLocation.distance(endLocation);
+        this.currentLocation = endLocation;
     }
 
     public double getLength() {

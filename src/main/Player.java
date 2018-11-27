@@ -55,11 +55,14 @@ public class Player {
      */
     public boolean checkLocation(Location checkLocation){
         int tolerance = GameController.STEPSIZE;
-        if (playerTurtle.getCurrentLocation().distance(checkLocation) < tolerance){
+        if (playerTurtle.getCurrentLocation().distance(checkLocation) < tolerance/2){
+            System.out.println("Turtle at location "+checkLocation+"is inside turtle "+playerTurtle.getCurrentLocation());
             return true;
         }
         for(Line line:playerLines){
             if (line.checkLocation(checkLocation)){
+                System.out.println("Turtle at location "+checkLocation+"is inside line "+line.getCurrentLocation());
+
                 return true;
             }
         }
@@ -85,6 +88,17 @@ public class Player {
             currentLine.setEndLocation(new Location(playerTurtle.getCurrentLocation()));
             playerLines.set(playerLines.size()-1, currentLine);
         }
+    }
+
+    public void resetLine(){
+        System.out.println("Resetting line");
+        currentLine = null;
+    }
+
+    public void resetPlayer(Location startLoc){
+        playerLines.clear();
+        playerTurtle.setCurrentLocation(startLoc);
+        currentLine = null;
     }
 
     public String toString(){

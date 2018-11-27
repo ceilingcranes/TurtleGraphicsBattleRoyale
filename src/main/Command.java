@@ -7,43 +7,50 @@ import java.util.regex.Pattern;
 
 /**
  * The main.Command class is used to track the commands used to control a given turtle. The initalization requires
- * either an ArrayList of inputs, a file name containing valid commands, with one command on each line, or a string
- * with valid commands seperated with newlines. This keeps track of the current command, and allows a system for getting
- * the next LocationChange object for movement.
+ * either an ArrayList of inputs or a string with valid commands seperated with newlines.
+ * This keeps track of the current command, and has a method for getting the next LocationChange object for movement.
  */
 public class Command { // TODO: Implements Iterable
+    /** The list of LocationChange that tracks what the commands do. */
     private LinkedList<LocationChange> commandList = new LinkedList<>();
+    /** The list of the line numbers of invalid commands */
     private ArrayList<Integer> invalidCommandLineNumber = new ArrayList<>();
+    /** The list of the actual input strings */
     private ArrayList<String> commandInputs = new ArrayList<>();
-
-    int index = 0; // Make this not terrible
+    /** The index of the next LocationChange inside commandList to return.*/
+    private int index = 0;
+    /** The full input */
     private String commandString;
+    /** The regular expression for evaluating move commands */
     private final String MOVE_REGEX = "move (\\d*)";
+    /** The regular expression for evaluating turn commands */
     private final String TURN_REGEX = "turn (-?\\d*)";
 
-    // TODO: Add file option, add option for string input with \n or , separations
-//    public main.Command(String filename){
-//
-//    }
-
-    public Command(){this.commandString = "";}
-
+    /**
+     * Create a new object out of a string input.
+     * @param commandInput A String with move and turn commands, seperated by a newline.
+     */
     public Command(String commandInput){
         this.commandString = "";
         addCommands(commandInput);
     }
 
-    public Boolean isEmpty(){
-        return commandList.isEmpty();
-    }
-
+    /**
+     * Return a string containing all the commmands
+     * @return String containing all commands
+     */
     public String toString(){
         return commandString;
     }
 
+    /**
+     * Add commands from a String which has commands separated by newlines. If given an empty string, it will
+     * default to not moving. If one or more command is invalid, its line number will be added to
+     * the invalidCommandLineNumber array for display of errors.
+     * @param commandString A String of valid commands, separated by newlines, which will be added on to the Command iteration.
+     */
     public void addCommands(String commandString){
         if (commandString.equals("")){
-            System.out.println("Command input string empty");
             this.commandList.add(new LocationChange(0,0));
             return;
         }
@@ -58,18 +65,25 @@ public class Command { // TODO: Implements Iterable
             if (next_location == null)
                 this.invalidCommandLineNumber.add(i);
             else {
-                System.out.println("Location Change: "+next_location.getMove());
-                System.out.println("Location Class: "+ next_location.getClass());
                 this.commandList.add(next_location);
             }
         }
         this.commandString += commandString;
     }
 
+    /**
+     * Return the invalid command line number, which will be an empty ArrayList if all the entered commands are valid.
+     * @return ArrayList of integers corresponding to the line numbers of invalid commands.
+     */
     public ArrayList<Integer> getInvalidCommandLineNumber(){
         return invalidCommandLineNumber;
     }
 
+    /**
+     * Will check to see if a single command input is valid or not.
+     * @param input the single command to be validated
+     * @return true if the command is valid, false if it isn't.
+     */
     public boolean validateCommand(String input){
         String toMatch = input.trim();
         Pattern commandPattern = Pattern.compile(MOVE_REGEX + "|" + TURN_REGEX);
@@ -77,6 +91,12 @@ public class Command { // TODO: Implements Iterable
         return commandMatch.matches();
     }
 
+    /**
+     * Given a single input, will create a new LocationChange object with either a move or a turn.
+     * @param input A single valid input, either move or turn
+     * @return a LocationChange object translating the command into a number of degrees of turning or a number
+     * of steps of movement.
+     */
     public LocationChange generateLocationChange(String input){
         String toMatch = input.trim();
         Pattern movePattern = Pattern.compile(MOVE_REGEX);
@@ -97,6 +117,11 @@ public class Command { // TODO: Implements Iterable
 //        throw new RuntimeException("main.Command Not valid: "+ toMatch);
     }
 
+    /**
+     * Go through the Commands in order, and return the next LocationChange object in the sequence. Will loop back
+     * to the beginning upon reaching the end of the Commands.
+     * @return LocationChange object corresponding to the next change.
+     */
     public LocationChange getNextLocation(){
         if (commandList.isEmpty()){
             return new LocationChange(0,0);
@@ -110,19 +135,19 @@ public class Command { // TODO: Implements Iterable
         }
     }
 
+    /**
+     * Reset the Command object.
+     */
     public void resetCommands(){
         commandList.clear();
         commandString = "";
     }
 
+    /**
+     * Get the ArrayList of String inputs.
+     * @return ArrayList of Strings corresponding to the command inputs
+     */
     public ArrayList<String> getCommandInputs(){
         return this.commandInputs;
     }
-
-    public static void main(String[] args) {
-        String test_vals = "move 2\nturn -20";
-        Command command = new Command(test_vals);
-
-    }
-
 }
