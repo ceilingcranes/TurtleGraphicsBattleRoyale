@@ -31,13 +31,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Control the UI elements and Game board. The UI will step through the start screen where you set the number of players,
+ * then going to the screen to set the player names and input the commands into a text box. Finally, the last screen
+ * is the player screen, displaying the names, colors, and commands of each player, and running the game board when the
+ * "start" button is pressed.
+ */
 public class ViewApplication extends Application {
+    /** The number of players */
     private final IntegerProperty numPlayers = new SimpleIntegerProperty(1);
+    /** The size of the board - assumes a square board for gameplay. */
     public final static int BOARDSIZE = 600;
+    /** The number of units covered by one edge of the turtle image */
     public final static int IMAGE_SIZE = 20;
-//    private GameBoard board = new GameBoard();
+    /** The GameController object that manages Game objects and gameplay. */
     private GameController gameController = new GameController(BOARDSIZE, BOARDSIZE);
 
+    /**
+     * Class to handle the number of players button screen.
+     */
     class NumPlayersButton implements EventHandler<ActionEvent> {
         private final int number;
         private NumPlayersButton(int np){
@@ -49,8 +61,13 @@ public class ViewApplication extends Application {
         }
     }
 
+    /**
+     * Class to store Player data entered into the text fields.
+     */
     class PlayerTextFields{
+        /** Name data*/
         private TextField name;
+        /** String of commands */
         private TextArea commands;
         private PlayerTextFields(TextField playerName, TextArea playerCommands){
             this.name = playerName;
@@ -115,6 +132,10 @@ public class ViewApplication extends Application {
         return root;
     }
 
+    /**
+     * Create the pane for the Start Screen using startScreenSceneGraph and update the Stage primaryStage to display it.
+     * @param primaryStage The Stage object corresponding to the window to update.
+     */
     public void startScreenScene(Stage primaryStage){
         GridPane start = (GridPane) startScreenSceneGraph(primaryStage);
         updateStage(primaryStage, start, "Start");
@@ -206,19 +227,12 @@ public class ViewApplication extends Application {
         updateStage(primaryStage, sceneGraph, "Player Update");
     }
 
-    private Pane playGameSceneGraph(Stage primaryStage){
-        GridPane root = new GridPane();
-        GridPane gameBoard = gameBoardSceneGraph(primaryStage);
-        root.getChildren().add(gameBoard);
-        return root;
-    }
-
     /**
      * Create the Scene Graph for the actual game board screen, with players, commands, and turtle running.
      * @param primaryStage The stage associated with the scene
      * @return GridPane object containing the root of the scene graph.
      */
-    private GridPane gameBoardSceneGraph(Stage primaryStage){
+    private GridPane playGameSceneGraph(Stage primaryStage){
         // https://gamedevelopment.tutsplus.com/tutorials/introduction-to-javafx-for-game-development--cms-23835
 
         GridPane root = new GridPane();
@@ -299,17 +313,31 @@ public class ViewApplication extends Application {
         turtleMap.put("0x5abaa7", new ImageView(blueTurtle));
         turtleMap.put("0xffdf71", new ImageView(yellowTurtle));
 
+        // Create the actual game canvas and add all the method calls to run the game
+        /**
+         * Class to create an AnimationTimer to run the game board and update locations of GameObjects as the game runs.
+         * Each step takes 1 second, with each step calling the Subject updater through GameController, and getting
+         * the game objects in play from the GameController. Once it has the objects, it adds them to the board at the
+         * locations given by each GameObject's current location.
+         */
         AnimationTimer timer = new AnimationTimer(){
             private SnapshotParameters params = new SnapshotParameters();
             private int timeCounter = 0;
             private long startNanoTime = 0;
 
+            /**
+             * Start the sytem by setting startNanoTime to track the elapsed time
+             */
             @Override
             public void start(){
                 startNanoTime = System.nanoTime();
                 super.start();
             }
 
+            /**
+             * Take in the current time and evaluate game steps at the given points
+             * @param currentNanoTime The current time in Nanoseconds
+             */
             public void handle(long currentNanoTime){
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
                 if (t > timeCounter) { // Move every 1 second
@@ -317,7 +345,7 @@ public class ViewApplication extends Application {
                     gc.setFill(Paint.valueOf("white"));
                     gc.fillRect(0, 0, BOARDSIZE, BOARDSIZE);
                     ArrayList<GameObject> objects = gameController.getObjects();
-
+                    // Create images for each GameObject
                     for (GameObject obj : objects) {
                         if (obj instanceof Turtle) {
                             String color = obj.getObjectColor();
@@ -337,28 +365,21 @@ public class ViewApplication extends Application {
                                     lineObj.getEndLocation().getYLocation());
                         }
                     }
-                    Player winningPlayer = gameController.checkLose();
-                    if (winningPlayer != null){
-                        Alert winAlert = new Alert(Alert.AlertType.INFORMATION, winningPlayer.getPlayerName()+" " +
+                    Player losingPlayer = gameController.checkLose();
+                    // Check for a lose, and alert before stopping and resetting the game
+                    if (losingPlayer != null){
+                        Alert winAlert = new Alert(Alert.AlertType.INFORMATION, losingPlayer.getPlayerName()+" " +
                                 "is the loser of this round!"
                         );
 
                         Platform.runLater(winAlert::showAndWait);
                         gameController.resetGame();
                         this.stop();
-//                                .ifPresent(response ->{
-//                            if(response == ButtonType.NO){
-//                                gameController.resetGame();
-//                            }
-//                            else if (response == ButtonType.YES){
-//                                playerCreationScene(primaryStage);
-//                            }
-//                        }));
                     }
                 }
             }
         };
-
+        // Button to start the game animation
         Button startButton = new Button("Start");
         startButton.setOnAction((event)->{
             timer.start();
@@ -368,11 +389,22 @@ public class ViewApplication extends Application {
         return root;
     }
 
+    /**
+     * Create the Scene graph for the game play and update the primaryStage with that graph
+     * @param primaryStage The Stage object corresponding to the current window
+     */
     private void playGameScene(Stage primaryStage){
         Pane sceneGraph = playGameSceneGraph(primaryStage);
         updateStage(primaryStage, sceneGraph, "Gameplay");
     }
 
+    /**
+     * Given a Scene Graph, a Stage, and a title, update the stage with the given title and set the output to the scene
+     * graph. Used to switch between different screens.
+     * @param primaryStage The Stage object corresponding to the current window
+     * @param root The Scene graph with all the UI elements and code that handles events
+     * @param title The title to put at the top of the window
+     */
     private void updateStage(Stage primaryStage, Pane root, String title){
         Scene scene = new Scene(root, 1200, 700);
         primaryStage.setTitle(title);
@@ -385,13 +417,13 @@ public class ViewApplication extends Application {
      * Required method to start the application
      */
     public void start(Stage primaryStage) {
-//        startScreenScene(primaryStage);
-        Command[] addCommands = {new Command("turn -90\nmove 2\nturn 30\nmove 4"),
-                new Command("turn 45\nmove 100")
-        };
-        String[] playerNames = {"player1", "player2"};
-        gameController.getPlayers().addPlayers(playerNames, addCommands);
-        playGameScene(primaryStage);
+        startScreenScene(primaryStage);
+//        Command[] addCommands = {new Command("turn -90\nmove 2\nturn 30\nmove 4"),
+//                new Command("turn 45\nmove 100")
+//        };
+//        String[] playerNames = {"player1", "player2"};
+//        gameController.getPlayers().addPlayers(playerNames, addCommands);
+//        playGameScene(primaryStage);
     }
 
     public static void main(String[] args) {

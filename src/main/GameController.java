@@ -42,7 +42,7 @@ public class GameController {
         // call player.update, get objects from each player, then return the full list. The
         // view controller then gets the location and color of each gameobject and uses this to
         // create a new "step" of the board.
-        updatePlayers();
+        players.updatePlayers();
         boolean bounced;
         ArrayList<GameObject> gameObjects = new ArrayList<>();
         for (Player p: players.getPlayerList()){
@@ -83,15 +83,6 @@ public class GameController {
      */
     public void resetGame(){
         players.resetAllPlayers();
-    }
-
-    /**
-     * Go through and update all the players, thus updating the location of the turtles.
-     */
-    public void updatePlayers(){
-        for(Player p: players.getPlayerList()){
-            p.update();
-        }
     }
 
     /**

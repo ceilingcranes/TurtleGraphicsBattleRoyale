@@ -1,20 +1,25 @@
 package main;
 
-import javax.management.monitor.GaugeMonitor;
 import java.util.ArrayList;
 
 /**
- * Tracks methods for adding, removing, and accessing Player objects.
+ * Tracks methods for adding, removing, and accessing Player objects. Acts as the Subject controlling Observer updates.
  * @Author Maxine Hartnett
  */
 public class PlayerList {
-
+    /** Track the number of players */
     private int numPlayers;
+    /** Track the Players in player */
     private ArrayList<Player> playerList;
     // Red, Green, Blue, Yellow
+    /** Set up the default player colors, in Red, Green, Blue, Yellow */
     private final String[] PLAYER_COLORS = new String[]{"0xff8f80", "0xa3d977", "0x5abaa7", "0xffdf71"};
+    /** Create a Location list for the starting Locations */
     private Location[] startingLocations = new Location[4];
 
+    /**
+     * Create a new, empty PlayerList, and set up the starting locations based on the set boardsize and stepsize.
+     */
     public PlayerList(){
         numPlayers = 0;
         playerList = new ArrayList<>();
@@ -53,6 +58,15 @@ public class PlayerList {
     }
 
     /**
+     * Update all the Player objects, taking a step and updating Turtle and Lines controlled by the player
+     */
+    public void updatePlayers(){
+        for (Player p : playerList){
+            p.update();
+        }
+    }
+
+    /**
      * Create and add multiple players, automatically setting color and location.
      * @param playerNames List of player names
      * @param playerCommands List of Command objects representing player commands
@@ -75,7 +89,6 @@ public class PlayerList {
         return playerList.get(index);
     }
 
-
     /**
      * Delete a player from the player list.
      * @param index Index of the Player to remove
@@ -84,10 +97,17 @@ public class PlayerList {
         playerList.remove(index);
     }
 
+    /**
+     * Get the Player list
+     * @return ArrayList of Players controlled by Playerlist
+     */
     public ArrayList<Player> getPlayerList(){
         return playerList;
     }
 
+    /**
+     * Go through and reset all Player objects, removing Lines and setting the Turtle locations back to the starting Location.
+     */
     public void resetAllPlayers(){
         int index = 0;
         for (Player p: playerList){
@@ -95,6 +115,11 @@ public class PlayerList {
             index++;
         }
     }
+
+    /**
+     * Get the colors that will be assigned.
+     * @return String List, with colors as hex strings (e.g. 0xFFFFFF)
+     */
     public String[] getPlayerColors(){
         return this.PLAYER_COLORS;
     }
