@@ -384,8 +384,14 @@ public class ViewApplication extends Application {
         startButton.setOnAction((event)->{
             timer.start();
         });
-        root.getChildren().add(startButton);
+        
+        Button newGameButton = new Button("New Game");
+        newGameButton.setOnAction((event)->{
+        	startScreenScene(primaryStage);
+        });
+        root.getChildren().addAll(startButton, newGameButton);
         GridPane.setConstraints(startButton, 2,2);
+        GridPane.setConstraints(newGameButton, 2, 3);
         return root;
     }
 
