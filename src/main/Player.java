@@ -141,6 +141,7 @@ public class Player implements Observer{
      * @param startLoc The Location to set the Turtle to.
      */
     public void resetPlayer(Location startLoc){
+    	System.out.println("REsetting indiv. player");
         playerLines.clear();
         playerTurtle.setCurrentLocation(startLoc);
         currentLine = null;

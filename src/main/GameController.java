@@ -82,6 +82,7 @@ public class GameController {
      * Reset all players back to initial positions, and remove all lines.
      */
     public void resetGame(){
+    	System.out.println("RESETTING"+players);
         players.resetAllPlayers();
     }
 
@@ -115,5 +116,13 @@ public class GameController {
             }
         }
         return wasChanged;
+    }
+    
+    /**
+     * Reset the full game, deleting all players.
+     */
+    public void resetAll() {
+    	System.out.println("RESETTINGALL PLAYERS");
+    	players = new PlayerList();
     }
 }

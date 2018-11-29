@@ -326,7 +326,7 @@ public class ViewApplication extends Application {
             private long startNanoTime = 0;
 
             /**
-             * Start the sytem by setting startNanoTime to track the elapsed time
+             * Start the system by setting startNanoTime to track the elapsed time
              */
             @Override
             public void start(){
@@ -374,6 +374,7 @@ public class ViewApplication extends Application {
 
                         Platform.runLater(winAlert::showAndWait);
                         gameController.resetGame();
+                        gc.fillRect(0, 0, BOARDSIZE, BOARDSIZE);
                         this.stop();
                     }
                 }
@@ -387,7 +388,8 @@ public class ViewApplication extends Application {
         
         Button newGameButton = new Button("New Game");
         newGameButton.setOnAction((event)->{
-        	startScreenScene(primaryStage);
+//        	startScreenScene(primaryStage);
+        
         });
         root.getChildren().addAll(startButton, newGameButton);
         GridPane.setConstraints(startButton, 2,2);
